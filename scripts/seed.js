@@ -57,10 +57,10 @@ async function main() {
 
    const client = await clientPromise()
    const db = client.db("next_full_stack");
-    await seedUsers(db);
-    await seedCustomers(db);
+    // await seedUsers(db);
+    // await seedCustomers(db);
     await seedInvoices(db);
-    await seedRevenue(db);
+    // await seedRevenue(db);
   } catch (err) {
    console.log(err);
   }
