@@ -102,56 +102,56 @@ export async function fetchLatestInvoices() {
 
 
 
-export async function fetchCardData() {
-  try {
+// export async function fetchCardData() {
+//   try {
 
-    const client = mongoClient
-    const db = client.db("next_full_stack");
+//     const client = mongoClient
+//     const db = client.db("next_full_stack");
 
-    const invoiceCountPromise = db.collection('revenue').countDocuments();
-    const customerCountPromise = db.collection('customers').countDocuments();
-    const invoiceStatusPromise = db.collection('invoices').aggregate([
-      {
-        $group: {
-          _id: null,
-          paid: {
-            $sum: {
-              $cond: [{ $eq: ["$status", "paid"] }, "$amount", 0]
-            }
-          },
-          pending: {
-            $sum: {
-              $cond: [{ $eq: ["$status", "pending"] }, "$amount", 0]
-            }
-          }
-        }
-      }
-    ]).toArray();
+//     const invoiceCountPromise = db.collection('revenue').countDocuments();
+//     const customerCountPromise = db.collection('customers').countDocuments();
+//     const invoiceStatusPromise = db.collection('invoices').aggregate([
+//       {
+//         $group: {
+//           _id: null,
+//           paid: {
+//             $sum: {
+//               $cond: [{ $eq: ["$status", "paid"] }, "$amount", 0]
+//             }
+//           },
+//           pending: {
+//             $sum: {
+//               $cond: [{ $eq: ["$status", "pending"] }, "$amount", 0]
+//             }
+//           }
+//         }
+//       }
+//     ]).toArray();
 
-    const data = await Promise.all([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
-    ]);
+//     const data = await Promise.allSettled([
+//       invoiceCountPromise,
+//       customerCountPromise,
+//       invoiceStatusPromise,
+//     ]);
 
-    const numberOfInvoices = data[0];
-    const numberOfCustomers = data[1];
-    const invoiceStatus = data[2][0] || { paid: 0, pending: 0 };
+//     const numberOfInvoices = data[0];
+//     const numberOfCustomers = data[1];
+//     const invoiceStatus = data[2][0] || { paid: 0, pending: 0 };
 
-    const totalPaidInvoices = formatCurrency(invoiceStatus.paid);
-    const totalPendingInvoices = formatCurrency(invoiceStatus.pending);
+//     const totalPaidInvoices = formatCurrency(invoiceStatus.paid);
+//     const totalPendingInvoices = formatCurrency(invoiceStatus.pending);
 
-    return {
-      numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
-    };
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch card data.');
-  }
-}
+//     return {
+//       numberOfCustomers,
+//       numberOfInvoices,
+//       totalPaidInvoices,
+//       totalPendingInvoices,
+//     };
+//   } catch (error) {
+//     console.error('Database Error:', error);
+//     throw new Error('Failed to fetch card data.');
+//   }
+// }
 
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(
