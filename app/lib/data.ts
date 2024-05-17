@@ -9,7 +9,7 @@ import {
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
-import mongoClient from './dbClient';
+import getMongoClient from './dbClient';
 import { ObjectId } from 'mongodb';
 
 
@@ -20,8 +20,8 @@ export async function fetchRevenue() {
     id: ObjectId
   };
   try {
-    const client = mongoClient
-    const db = client.db("next_full_stack");
+    const client = await getMongoClient()
+    const db =  client.db("next_full_stack");
     const revenueCollection = db.collection<DBUser>('revenue');
 
     // Find all documents in the "revenue" collection
@@ -37,7 +37,7 @@ export async function fetchRevenue() {
 
 export async function fetchLatestInvoices() {
   try {
-    const client = mongoClient
+    const client = await getMongoClient()
     if (!client) {
       throw new Error("Failed to connect to DB")
     }
@@ -68,7 +68,7 @@ export async function fetchLatestInvoices() {
 export async function fetchCardData() {
   try {
 
-    const client = mongoClient
+    const client = await getMongoClient()
     const db = client.db("next_full_stack");
 
     const invoiceCountPromise = db.collection('revenue').countDocuments();
