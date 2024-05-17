@@ -14,7 +14,7 @@ if (!mongoClient ) {
 
 
   try {
-    mongoClient  = new MongoClient(uri);
+    mongoClient  = new MongoClient(uri, {serverSelectionTimeoutMS: 5000});
     await mongoClient .connect();
     console.log('MongoDB connected successfully');
   } catch (error) {
