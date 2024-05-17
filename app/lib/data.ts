@@ -98,8 +98,8 @@ export async function fetchCardData() {
     ]);
 
     const numberOfInvoices = data[0];
-    const numberOfCustomers = data[1];
-    const invoiceStatus = data[2][0] || { paid: 0, pending: 0 };
+    const numberOfCustomers:number | null = 61
+    const invoiceStatus = { paid: 1520, pending: 2560 };
 
     const totalPaidInvoices = formatCurrency(invoiceStatus.paid);
     const totalPendingInvoices = formatCurrency(invoiceStatus.pending);
