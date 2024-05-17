@@ -1,9 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
-import mongoClient from "@/app/lib/dbClient";
+import getMongoClient from "@/app/lib/dbClient";
 
 
 export async function GET() {
-    const client = mongoClient
+    const client = await getMongoClient()
     if (!client) {
         return NextResponse.json("Failed to connect to DB")
     }
@@ -25,8 +25,6 @@ export async function GET() {
 export async function POST(req: NextRequest) {
     const data12 = await req.json()
 
-
-    console.log(data12);
 
     const data = {
         id: 1,
