@@ -4,7 +4,7 @@ if (!process.env.MONGODB_URI) {
   throw new Error("Please add your Mongo URI to .env");
 }
 
-const uri: string = process.env.MONGODB_URI;
+const uri:string = "mongodb+srv://admin_ai:Admin1234@cluster0.tdzqajf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 let mongoClient: MongoClient | null = null;
 
 async function getMongoClient(): Promise<MongoClient> {
