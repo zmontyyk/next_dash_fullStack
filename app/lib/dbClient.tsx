@@ -16,7 +16,7 @@ async function getMongoClient(): Promise<MongoClient> {
       await mongoClient.connect();
       console.log('MongoDB connected successfully');
     } catch (error) {
-      console.error('MongoDB not connected', error);
+      console.error('MongoDB not connectedyayyyyyyyyyyyyyyyyyyyyyyyyyyyyy', error);
       throw error; // Re-throw the error after logging it
     }
   }
