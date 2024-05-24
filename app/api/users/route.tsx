@@ -9,10 +9,8 @@ import { ObjectId } from "mongodb";
 export async function GET() {
 
     try {
-
         await getMongoConnection()
         const usersList = await Users.find()
-
         return NextResponse.json(usersList)
     } catch (error) {
 

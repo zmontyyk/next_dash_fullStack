@@ -11,9 +11,10 @@ import {
 import { formatCurrency } from './utils';
 import getMongoClient from './dbClient';
 import Users from '../models/Users';
+import { unstable_noStore as noStore } from 'next/cache';
 
 export async function fetchRevenue() {
-
+  noStore()
   try {
     await getMongoClient()
     const data = await Revenue.find({})
@@ -26,6 +27,7 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  noStore()
   try {
     await getMongoClient()
     const data = await Users.find({})
