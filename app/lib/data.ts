@@ -9,22 +9,20 @@ import {
 } from './definitions';
 import { formatCurrency } from './utils';
 import getMongoClient from './dbClient';
-import Revenue from '@/app/models/Revenue'
 import Users from '../models/Users';
 
+// export async function fetchRevenue() {
 
-export async function fetchRevenue() {
+//   try {
+//     await getMongoClient()
+//     const data = await Revenue.find({})
+//     return data
+//   } catch (error) {
+//     console.error('Database Error:', error);
+//     throw new Error('Failed to fetch revenue data.');
+//   }
 
-  try {
-    await getMongoClient()
-    const data = await Revenue.find({})
-    return data
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
-  }
-
-}
+// }
 
 export async function fetchLatestInvoices() {
   try {
