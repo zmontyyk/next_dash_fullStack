@@ -9,20 +9,15 @@ const authOptions: NextAuthConfig = {
     ...authConfig,
     providers: [
         Credentials({
-            async authorize(credentials) {
+            authorize: async (credentials) => {
                 const parsedCredentials = z
                     .object({ email: z.string().email(), password: z.string().min(6) })
                     .safeParse(credentials);
 
                 if (parsedCredentials.success) {
                     await getMongoConnection()
-                    const getUser:any = await User.findOne({ email: credentials.email, password: credentials.email })
-                    if (getUser) {
-                        return {
-                            email: getUser.email,
-                            password: getUser.password
-                        }
-                    }
+                    const getUser = await User.findOne({ email: credentials.email, password: credentials.email })
+                    return getUser
                 }
                 console.log('Invalid credentials');
                 return null;

@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
-if (!process.env.MONGODB_URI) {
-  throw new Error("Please add your Mongo URI to .env");
-}
+// if (!process.env.MONGODB_URI) {
+ 
+// }
 
-const URL: string = process.env.MONGODB_URI;
+const URL = process.env.MONGODB_URI as string;
 
 const connection: { isConnected?: Number } = {}
 

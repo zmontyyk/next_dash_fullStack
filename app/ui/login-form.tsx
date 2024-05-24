@@ -17,7 +17,7 @@ export default function LoginForm() {
     formData: FormData,) => {
 
     try {
-      await signIn('credentials', formData);
+      await signIn('authorize', formData);
     } catch (error) {
       if (error instanceof AuthError) {
         switch (error.type) {
