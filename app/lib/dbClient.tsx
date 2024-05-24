@@ -1,26 +1,26 @@
-import { MongoClient } from "mongodb";
+import mongoose from 'mongoose';
 
 if (!process.env.MONGODB_URI) {
   throw new Error("Please add your Mongo URI to .env");
 }
 
-const uri: string = process.env.MONGODB_URI
+const URL: string = process.env.MONGODB_URI;
 
-let mongoClient: MongoClient | null = null;
+const connection: { isConnected?: Number } = {}
 
-async function getMongoClient(): Promise<MongoClient> {
-  if (!mongoClient) {
-    try {
-      mongoClient = new MongoClient(uri, {
-        serverSelectionTimeoutMS: 5000, // Adjust timeout as needed
-      });
-      await mongoClient.connect();
-      console.log('MongoDB connected successfully');
-    } catch (error) {
-      console.error('MongoDB not connected', error);
-      throw error; // Re-throw the error after logging it
-    }
+async function getMongoConnection() {
+
+  if (connection.isConnected) {
+    console.log('db already connected');
+
+    return
   }
-  return mongoClient;
+
+  const db = await mongoose.connect(URL,{dbName:"next_full_stack"})
+
+  connection.isConnected = db.connections[0].readyState
+
 }
-export default getMongoClient;
+
+export default getMongoConnection;
+
