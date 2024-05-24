@@ -6,13 +6,11 @@ import {
   InvoicesTable,
   LatestInvoiceRaw,
   User,
-  // Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
 import getMongoClient from './dbClient';
-import { ObjectId } from 'mongodb';
-import Users from '../models/Users';
 import Revenue from '../models/Revenue';
+import Users from '../models/Users';
 
 
 export async function fetchRevenue() {
