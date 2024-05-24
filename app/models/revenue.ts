@@ -1,7 +1,5 @@
 import { Schema,model,models } from "mongoose";
 
-
-
 const RevenueSchema = new Schema({
     month:{
         type:String,

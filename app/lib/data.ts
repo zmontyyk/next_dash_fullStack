@@ -9,7 +9,7 @@ import {
 } from './definitions';
 import { formatCurrency } from './utils';
 import getMongoClient from './dbClient';
-import Revenue from '../models/Revenue';
+import Revenue from '@/app/models/Revenue'
 import Users from '../models/Users';
 
 
