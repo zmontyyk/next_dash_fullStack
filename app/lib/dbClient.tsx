@@ -1,25 +1,73 @@
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 
-if (!process.env.MONGODB_URI) {
-  throw new Error("Please add your Mongo URI to .env");
+// const URL = process.env.MONGODB_URI as string;
+
+// const connection: { isConnected?: Number } = {}
+
+// async function getMongoConnection() {
+
+//   if (connection.isConnected) {
+//     console.log('db already connected');
+//     const data = await Promise.resolve("some data")
+//     return data
+//   }
+
+//   const db = await mongoose.connect(URL,{dbName:"next_full_stack"})
+
+//   connection.isConnected = db.connections[0].readyState
+
+// }
+
+// export default getMongoConnection;
+
+
+// lib/dbConnect.ts
+import mongoose, { ConnectOptions } from 'mongoose';
+
+const MONGODB_URI = process.env.MONGODB_URI as string;
+
+if (!MONGODB_URI) {
+  throw new Error(
+    'Please define the MONGODB_URI environment variable inside .env.local'
+  );
 }
 
-const URL: string = process.env.MONGODB_URI;
+interface Cached {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
 
-const connection: { isConnected?: Number } = {}
+declare global {
+  // This keeps the global cache across hot reloads in development
+  // @ts-ignore
+  var mongoose: Cached;
+}
 
-async function getMongoConnection() {
+let cached: Cached = global.mongoose;
 
-  if (connection.isConnected) {
-    console.log('db already connected');
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
-    return
+async function getMongoConnection(): Promise<typeof mongoose> {
+  if (cached.conn) {
+    console.log('Using existing database connection');
+    return cached.conn;
   }
 
-  const db = await mongoose.connect(URL,{dbName:"next_full_stack"})
+  if (!cached.promise) {
+    const opts: ConnectOptions = {
+      bufferCommands: false,
+      dbName: "next_full_stack"
+    };
 
-  connection.isConnected = db.connections[0].readyState
-
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      console.log('New database connection established');
+      return mongoose;
+    });
+  }
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
 
 export default getMongoConnection;
