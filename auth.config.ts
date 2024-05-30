@@ -1,5 +1,6 @@
 import GitHub from 'next-auth/providers/github';
 import type { NextAuthConfig } from 'next-auth';
+import { NextResponse } from 'next/server';
 
 // Notice this is only an object, not a full Auth.js instance
 export default {
@@ -23,25 +24,22 @@ export default {
             session.expires = token.exp;
             return session;
         },
-        authorized: ({ auth, request: { nextUrl } }) => {
-            const isLoggedIn = !!auth?.user;
-            const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-            if (isOnDashboard) {  
-                return isLoggedIn;
-            }
-            if (isLoggedIn) {
-                return Response.redirect(new URL('/dashboard', nextUrl));
-            }
-            return true;
-        },
-        redirect({ url, baseUrl }) {
-            // console.log(url);
+        authorized: ({ auth, request }) => {
+            const isLoggedin = auth?.user;
 
-            // Allows relative callback URLs
-            // if (url.startsWith('/')) return `${baseUrl}${url}`;
-            // Allows callback URLs on the same origin
-            // if (new URL(url).origin === baseUrl) return url;
-            return baseUrl;
+            if (
+                !isLoggedin &&
+                request.nextUrl.pathname.includes('/dashboard')
+            ) {
+                return NextResponse.redirect(new URL('/login', request.url));
+            }
+            if (isLoggedin && request.nextUrl.pathname.includes('/login')) {
+                return NextResponse.redirect(
+                    new URL('/dashboard', request.url),
+                );
+            }
+
+            return true;
         },
     },
     providers: [],

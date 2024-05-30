@@ -6,16 +6,18 @@ import { fetchLatestInvoices } from '@/app/lib/data';
 import { Suspense } from 'react';
 import { RevenueChartSkeleton } from '@/app/ui/skeletons';
 import { auth } from "@/auth"
+import { useRouter } from 'next/router';
 
 
 
 export default async function Page() {  
   const latestInvoices = await fetchLatestInvoices()
   const session = await auth()
-  // console.log(session);
+
+  // if (!session) {
+  //   return NextServer
+  // }
   
-  // const {totalPaidInvoices,totalPendingInvoices,numberOfInvoices,numberOfCustomers} =  await fetchCardData()
-  // console.log(totalPaidInvoices);
 
   return (
     <main>

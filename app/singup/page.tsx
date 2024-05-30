@@ -11,7 +11,7 @@ export default function LoginPage() {
             <p>contact to make a code</p>
           </div>
         </div>
-        <LoginForm value="login" />
+        <LoginForm value="SingUp" />
       </div>
     </main>
   );
