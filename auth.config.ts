@@ -1,4 +1,4 @@
-import GitHub from 'next-auth/providers/github';
+"use sever"
 import type { NextAuthConfig } from 'next-auth';
 import { NextResponse } from 'next/server';
 
@@ -26,6 +26,7 @@ export default {
         },
         authorized: ({ auth, request }) => {
             const isLoggedin = auth?.user;
+console.log( request.nextUrl.pathname);
 
             if (
                 !isLoggedin &&
