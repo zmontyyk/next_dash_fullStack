@@ -12,6 +12,8 @@ import { auth } from "@/auth"
 export default async function Page() {  
   const latestInvoices = await fetchLatestInvoices()
   const session = await auth()
+  // console.log(session);
+  
   // const {totalPaidInvoices,totalPendingInvoices,numberOfInvoices,numberOfCustomers} =  await fetchCardData()
   // console.log(totalPaidInvoices);
 

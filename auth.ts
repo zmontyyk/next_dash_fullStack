@@ -4,6 +4,7 @@ import { z } from 'zod';
 import User from './app/models/Users';
 import getMongoConnection from './app/lib/dbClient';
 import bcrypt from 'bcryptjs';
+import authConfig from './auth.config';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     secret: process.env.AUTH_SECRET,
@@ -14,38 +15,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session: {
         strategy: 'jwt',
     },
-    callbacks: {
-        jwt: async ({ token, user }) => {
-            if (user) {
-                token.user = user;
-            }
-            // Set the token's expiration time
-            const expirationTime = 10 * 24 * 60 * 60; // 10 days in seconds
-            token.exp = Math.floor(Date.now() / 1000) + expirationTime;
-            return token;
-        },
-        session: async ({ session, token }: { session: any; token: any }) => {
-            // here we put session.useData and put inside it whatever you want to be in the session
-            // here try to console.log(token) and see what it will have
-            // sometimes the user get stored in token.user.userData
-            // sometimes the user data get stored in just token.user
-            session.user = token.user;
-            session.jti = token.jti;
-            session.expires = token.exp;
-            return session;
-        },
-        // authorized: ({ auth, request: { nextUrl } }) => {
-        //   const isLoggedIn = !!auth?.user;
-        //   const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-        //   if (isOnDashboard) {
-        //     return isLoggedIn;
-        //   }
-        //   if (isLoggedIn) {
-        //     return Response.redirect(new URL('/dashboard', nextUrl));
-        //   }
-        //   return true;
-        // },
-    },
+    ...authConfig,
     providers: [
         Credentials({
             async authorize(credentials: any) {
