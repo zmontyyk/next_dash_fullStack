@@ -75,15 +75,12 @@ export default function LoginForm({ value }: { value: string }) {
                         >
                             Password
                         </label>
-                        <div
-                          
-                            className="relative"
-                        >
+                        <div className="relative">
                             <div
-                              onClick={(e) => {
-                                e.stopPropagation(),
-                                    setShowPassword(!showPassword);
-                            }}
+                                onClick={(e) => {
+                                    e.stopPropagation(),
+                                        setShowPassword(!showPassword);
+                                }}
                                 style={{
                                     position: 'absolute',
                                     left: '90%',
@@ -204,7 +201,7 @@ function LoginButton({ value }: { value: string }) {
             {value !== 'SingUp' ? (
                 <Link href={'/singup'} as={'singup'}>
                     <p className="cursor-pointer p-4 text-center text-blue-500">
-                        Don't have an account?
+                        Don&#39;t have an account?
                     </p>
                 </Link>
             ) : null}
