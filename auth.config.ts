@@ -1,4 +1,4 @@
-"use sever"
+'use sever';
 import type { NextAuthConfig } from 'next-auth';
 import { NextResponse } from 'next/server';
 
@@ -9,9 +9,6 @@ export default {
             if (user) {
                 token.user = user;
             }
-            // Set the token's expiration time
-            const expirationTime = 10 * 24 * 60 * 60; // 10 days in seconds
-            token.exp = Math.floor(Date.now() / 1000) + expirationTime;
             return token;
         },
         session: async ({ session, token }: { session: any; token: any }) => {
@@ -20,13 +17,10 @@ export default {
             // sometimes the user get stored in token.user.userData
             // sometimes the user data get stored in just token.user
             session.user = token.user;
-            session.jti = token.jti;
-            session.expires = token.exp;
             return session;
         },
         authorized: ({ auth, request }) => {
             const isLoggedin = auth?.user;
-console.log( request.nextUrl.pathname);
 
             if (
                 !isLoggedin &&

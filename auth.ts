@@ -5,15 +5,18 @@ import User from './app/models/Users';
 import getMongoConnection from './app/lib/dbClient';
 import bcrypt from 'bcryptjs';
 import authConfig from './auth.config';
+import google from 'next-auth/providers/google';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     secret: process.env.AUTH_SECRET,
-
+    trustHost: true,
     pages: {
         signIn: '/login',
     },
     session: {
         strategy: 'jwt',
+        // Set the token's expiration time
+        maxAge: Math.floor(Date.now() / 1000) + 10 * 24 * 60 * 60, // 10 days in seconds;
     },
     ...authConfig,
     providers: [
@@ -48,6 +51,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     return null;
                 }
             },
+        }),
+        google({
+            clientId: process.env.AUTH_GOOGLE_ID,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET,
         }),
     ],
 });

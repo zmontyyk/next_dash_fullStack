@@ -10,13 +10,16 @@ import { Button } from './button';
 import { useFormState, useFormStatus } from 'react-dom';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { authenticate } from '../lib/auth-action';
+import { authenticate ,authSingIn} from '../lib/auth-action';
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function LoginForm({ value }: { value: string }) {
-    const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+
+    const method = value === "SingUp" ? authSingIn : authenticate
+
+    const [errorMessage, dispatch] = useFormState( method, undefined);
     const [showPassword, setShowPassword] = useState(false);
 
     return (
