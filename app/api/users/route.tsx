@@ -5,7 +5,7 @@ import { Types } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
 import { auth } from '@/auth';
-
+import { unstable_noStore as noStore } from 'next/cache';
 const saltRounds = 10;
 
 export const GET = auth(async function GET(req) {
@@ -18,11 +18,22 @@ export const GET = auth(async function GET(req) {
     await getMongoConnection();
     const usersList = await Users.find();
     return NextResponse.json(usersList);
-});
-export const POST = auth(async function GET(request) {
-    if (!request.auth) return NextResponse.json({ message: 'Not authenticated' },{ status: 401 });
+}) as any;
 
+export const POST = auth(async function (request) {
+    await getMongoConnection();
     const userData = await request.json();
+    if (!userData) {
+        return new Response(
+            JSON.stringify({
+                message: 'no data provided !',
+            }),
+            {
+                status: 500,
+                headers: { 'content-type': 'application/json' },
+            },
+        );
+    }
 
     // Generate salt
     const salt = await bcrypt.genSalt(saltRounds);
@@ -30,39 +41,48 @@ export const POST = auth(async function GET(request) {
     const hash = await bcrypt.hash(userData.password, salt);
 
     try {
-        await getMongoConnection();
         // checking user if alredy exists in db
         const checkUser = await Users.findOne({ email: userData.email });
         if (checkUser) {
             return new Response(
                 JSON.stringify({
-                    Message: 'user already exists',
+                    message: 'user already exists',
                 }),
-                { status: 409 },
+                {
+                    status: 500,
+                    headers: { 'content-type': 'application/json' },
+                },
             );
         }
-
         // creating new user
         const newUser: any = new Users({ ...userData, password: hash });
         await newUser.save();
         return new Response(
             JSON.stringify({
-                Message: 'user is created',
-                newUser,
+                message: 'user created',
+                status: 201,
             }),
-            { status: 201 },
+            {
+                status: 201,
+                headers: { 'content-type': 'application/json' },
+            },
         );
     } catch (error: any) {
         return new Response(
             JSON.stringify({
                 Message: error._message,
             }),
-            { status: 403 },
+            { status: 500 },
         );
     }
 });
-export const PATCH = auth(async function GET(request) {
-    if (!request.auth) return NextResponse.json({ message: 'Not authenticated' },{ status: 401 });
+
+export const PATCH = auth(async function (request) {
+    if (!request.auth)
+        return NextResponse.json(
+            { message: 'Not authenticated' },
+            { status: 401 },
+        );
 
     const body = await request.json();
     const { email, password, userId } = body;
