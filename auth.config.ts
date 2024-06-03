@@ -33,6 +33,11 @@ export default {
                     new URL('/dashboard', request.url),
                 );
             }
+            if (isLoggedin && request.nextUrl.pathname.includes('/singup')) {
+                return NextResponse.redirect(
+                    new URL('/dashboard', request.url),
+                );
+            }
 
             return true;
         },

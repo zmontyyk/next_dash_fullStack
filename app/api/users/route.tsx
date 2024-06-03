@@ -59,7 +59,8 @@ export const POST = auth(async function (request) {
         await newUser.save();
         return new Response(
             JSON.stringify({
-                message: 'verify link send to email',
+                message: 'user created',
+                status: 201,
             }),
             {
                 status: 201,

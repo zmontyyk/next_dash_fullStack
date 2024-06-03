@@ -10,21 +10,19 @@ import { Button } from './button';
 import { useFormState, useFormStatus } from 'react-dom';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { authenticate ,authSingIn} from '../lib/auth-action';
+import { authenticate, authSingIn } from '../lib/auth-action';
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-
 export default function LoginForm({ value }: { value: string }) {
+    const method = value === 'SingUp' ? authSingIn : authenticate;
 
-    const method = value === "SingUp" ? authSingIn : authenticate
-
-    const [errorMessage, dispatch] = useFormState( method, undefined);
+    const [errorMessage, dispatch] = useFormState(method, undefined);
     const [showPassword, setShowPassword] = useState(false);
 
     return (
         <form action={dispatch} className="space-y-3">
-            <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
+          
                 <h1 className={`${lusitana.className} mb-3 text-2xl`}>
                     {value === 'SingUp'
                         ? 'Sign up for your new account'
@@ -91,7 +89,7 @@ export default function LoginForm({ value }: { value: string }) {
                                     cursor: 'pointer',
                                 }}
                             >
-                                {showPassword ? (
+                                {!showPassword ? (
                                     <svg
                                         width="20px"
                                         height="20px"
@@ -159,7 +157,7 @@ export default function LoginForm({ value }: { value: string }) {
                             <input
                                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                                 id="password"
-                                type={!showPassword ? 'text' : 'password'}
+                                type={showPassword ? 'text' : 'password'}
                                 name="password"
                                 placeholder="Enter password"
                                 required
@@ -187,7 +185,7 @@ export default function LoginForm({ value }: { value: string }) {
                         )}
                     </div>
                 </div>
-            </div>
+       
         </form>
     );
 }
@@ -207,7 +205,11 @@ function LoginButton({ value }: { value: string }) {
                         Don&#39;t have an account?
                     </p>
                 </Link>
-            ) : null}
+            ) : (
+                <Link href={'/login'} as={'login'}>
+                    <p className="cursor-pointer p-4 text-center text-blue-500">Have an account? Log in</p>
+                </Link>
+            )}
         </div>
     );
 }

@@ -27,12 +27,17 @@ export const authSingIn = async (
     prevState: string | undefined,
     formData: FormData,
 ) => {
-    console.log('hit');
-
     try {
         const response: {
             message: string;
+            status: number;
         } = await apiClient.newUser(formData);
+
+        console.log(response.status);
+
+        if (response.status === 201) {
+            await signIn('credentials', formData);
+        }
 
         return response.message;
     } catch (error) {
