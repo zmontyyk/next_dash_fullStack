@@ -4,6 +4,7 @@ import {
     AtSymbolIcon,
     KeyIcon,
     ExclamationCircleIcon,
+    UserIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
@@ -44,7 +45,7 @@ export default function LoginForm({ value }: { value: string }) {
                                 placeholder="Enter your full name"
                                 required
                             />
-                            <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                            <UserIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                         </div>
                     </div>
                 ) : null}
@@ -169,7 +170,7 @@ export default function LoginForm({ value }: { value: string }) {
             <LoginButton value={value} />
             {value !== 'SingUp' ? (
                 <>
-                    <hr style={{ borderTop: '1px dashed #bbb;' }} />
+                    <hr style={{ borderTop: '1px dashed #bbb' }} />
                     <Link href={'/login/reset'}>
                         <p className="cursor-pointer py-4 text-center text-sm font-medium">
                             Forgot password?
