@@ -7,6 +7,8 @@ const UserSchema = new Schema({
   username: { type: String,  },
   isActive: { type: Boolean, default:true },
   status: { type: String, default: null },
+  lastUpdated:{type:String,default:null},
+  
 });
 
 const User = models?.User || model('User', UserSchema);
