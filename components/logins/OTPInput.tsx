@@ -2,10 +2,10 @@ import React, { useState, ChangeEvent, KeyboardEvent } from 'react';
 
 interface OTPInputProps {
   length?: number;
-  onChangeOTP: (otp: string) => void;
+
 }
 
-const OTPInput: React.FC<OTPInputProps> = ({ length = 6, onChangeOTP }) => {
+const OTPInput: React.FC<OTPInputProps> = ({ length = 6 }) => {
   const [otp, setOtp] = useState<string[]>(new Array(length).fill(''));
 
   const handleChange = (element: HTMLInputElement, index: number) => {
@@ -19,9 +19,6 @@ const OTPInput: React.FC<OTPInputProps> = ({ length = 6, onChangeOTP }) => {
     if (element.nextElementSibling) {
       (element.nextElementSibling as HTMLInputElement).focus();
     }
-
-    // Call the callback function
-    onChangeOTP(newOtp.join(''));
   };
 
   const handleKeyUp = (element: KeyboardEvent<HTMLInputElement>, index: number) => {

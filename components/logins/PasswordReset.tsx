@@ -51,7 +51,7 @@ function PasswordReset() {
             </div>
             <div className="mt-4">
                 <label
-                    htmlFor="re-password"
+                    htmlFor="rePassword"
                 >
                    
                 </label>
@@ -76,9 +76,9 @@ function PasswordReset() {
 
                     <input
                         className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                        id="re-password"
+                        id="rePassword"
                         type={showPassword.rePassword ? 'text' : 'password'}
-                        name="re-password"
+                        name="rePassword"
                         placeholder="Renter password"
                         required
                         minLength={6}

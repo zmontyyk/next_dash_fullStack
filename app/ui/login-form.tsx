@@ -203,6 +203,7 @@ function LoginButton({ value }: { value: string }) {
 
     return (
         <div className="creds">
+             {pending ? <div className="loader  "></div> : null}
             <Button className="mt-4 w-full" aria-disabled={pending}>
                 {value == 'SingUp' ? 'Sing up' : 'Log in'}
                 <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />

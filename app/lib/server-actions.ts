@@ -1,18 +1,10 @@
 import Revenue from '../models/Revenue';
-import { sql } from '@vercel/postgres';
-import {
-    CustomerField,
-    CustomersTableType,
-    InvoiceForm,
-    InvoicesTable,
-    LatestInvoiceRaw,
-    User,
-} from './definitions';
 import { mailHandler } from './utils';
 import getMongoClient from './dbClient';
 import Users from '../models/Users';
 import { unstable_noStore as noStore } from 'next/cache';
 import Otp from '../models/Otp';
+import moment from 'moment';
 
 function delay(time: number) {
     return new Promise<void>((resolve, reject) => {
@@ -47,18 +39,20 @@ export async function fetchLatestInvoices() {
     }
 }
 
-export async function resetPassword(email?: string, password?: number) {
+export async function resetPassword(email: string, password?: string) {
     noStore();
     type responseType = {
         status: number;
         error: string | null;
         success: string | null;
+        id:string | null
     };
 
     const responseData: responseType = {
         status: 500,
         success: null,
         error: null,
+        id:null
     };
     try {
         await getMongoClient();
@@ -72,20 +66,38 @@ export async function resetPassword(email?: string, password?: number) {
         const user = await Users.findOne({ email: email });
 
         if (user) {
-            (responseData.success = 'OTP Send To Your email'),
-            (responseData.status = 201);
-            
-        // sendind otp vaild for 5 mint
-          const isSend = await mailHandler(email,otp)
-          if (isSend.accepted) {
-            const newOTp: any = new Otp({email:email,otp:otp});
-            await newOTp.save();
-          }
+            // sendind otp vaild for 5 mint
+            const isSend = await mailHandler(email, otp);
 
+            if (isSend.accepted) {
+                // checking for email alreday exist in collection
+                const otpRecord = await Otp.findOneAndUpdate(
+                    { email },
+                    { otp, createdAt: moment().unix() },
+                    { new: true, upsert: true },
+                );
+
+                if (!otpRecord) {
+                    const newOTp: any = new Otp({
+                        email: email,
+                        otp: otp,
+                        createdAt: moment().unix(),
+                    });
+                    await newOTp.save();
+                }
+            }
+            if (!isSend.accepted) {
+                responseData.success = 'Unable to send otp please try again';
+                responseData.status = 500;
+            }
+
+            responseData.success = 'OTP Send To Your email';
+            responseData.status = 201;
+            responseData.id = user._id.toString();
         }
         if (!user) {
-            (responseData.error = 'No user found!'),
-                (responseData.status = 500);
+            responseData.error = 'No user found!';
+            responseData.status = 500;
         }
 
         return responseData;
@@ -94,4 +106,43 @@ export async function resetPassword(email?: string, password?: number) {
 
         return error;
     }
+}
+
+export async function verifyOtpHandler(otp: string, email: string) {
+    type responseType = {
+        status: number;
+        error: string | null;
+        success: string | null;
+    };
+
+    const responseData: responseType = {
+        status: 500,
+        success: null,
+        error: null,
+    };
+    if (!email || !otp) {
+        responseData.error = 'Email and OTP are required';
+        return responseData;
+    }
+
+    try {
+        const storedOtp: any = await Otp.findOne({ email, otp });
+        if (!storedOtp) {
+            responseData.error = 'Invalid OTP';
+            return responseData;
+        }
+
+        const otpExpiryTime = storedOtp.createdAt + 5 * 60; // 5 minutes in seconds
+        const currentTime = moment().unix(); // Current time in seconds
+        if (currentTime > otpExpiryTime) {
+            responseData.error = 'OTP has expired';
+            return responseData;
+        }
+        // await Otp.findByIdAndDelete({ email });
+
+
+        responseData.success = 'OTP verified successfully';
+        responseData.status = 201;
+        return responseData;
+    } catch (error) {}
 }

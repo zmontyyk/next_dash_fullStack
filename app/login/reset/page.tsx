@@ -17,15 +17,18 @@ import OTPInput from '@/components/logins/OTPInput';
 import PasswordReset from '@/components/logins/PasswordReset';
 import RenderErrorMsg from '@/components/RenderErrorMsg';
 import CountDown from '@/components/CountDown';
+import Link from 'next/link';
+import { z } from 'zod';
 
 export default function LoginPage() {
     const [state, dispatch] = useFormState(authResetPassword, {
         steps: 0,
         error: null,
         success: null,
+        email: null,
+        userId: null,
+        isPasswordUpadted:false,
     });
-
-    const { pending } = useFormStatus();
 
     return (
         <main className="flex items-center justify-center transition-all md:h-screen ">
@@ -37,12 +40,12 @@ export default function LoginPage() {
                     </div>
                 </div>
                 <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-                    <form action={dispatch} className="space-y-3">
+                    <form   action={dispatch}>
                         <RenderSteps
                             steps={state.steps}
                             error={state.error}
                             success={state.success}
-                            pending={pending}
+                            isPasswordUpadted={state.isPasswordUpadted}
                         />
                     </form>
                     <div />
@@ -55,28 +58,35 @@ export default function LoginPage() {
 function RenderSteps({
     steps,
     error,
-    pending,
+    isPasswordUpadted,
     success,
 }: {
     steps: number;
     error: string | null;
     success: string | null;
-    pending: boolean;
+    isPasswordUpadted:boolean
 }) {
-    const [otp, setOtp] = useState<string | null>(null);
-    const handleChangeOTP = (otp: string) => {
-        setOtp(otp);
-    };
-
+    const { pending } = useFormStatus();
+    
     return (
         <>
             {steps === 0 && (
                 <div>
                     <label
-                        className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+                        className="mb-3 mt-5 block p-3 text-center text-base font-medium text-gray-900"
                         htmlFor="Name"
                     >
-                        Enter Your Email
+                        Trouble logging in?
+                        <p
+                            style={{
+                                fontSize: '14px',
+                                padding: '8px',
+                                color: 'gray',
+                            }}
+                        >
+                            Enter your email, and we'll send you an OTP to log
+                            back into your account.
+                        </p>
                     </label>
                     <div className="relative">
                         <input
@@ -84,10 +94,10 @@ function RenderSteps({
                             id="email"
                             type="text"
                             name="email"
-                            placeholder="Enter your full name"
+                            placeholder="enter your email"
                             required
                         />
-                        <UserIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                        <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                     </div>
                     <div
                         className="flex items-end space-x-1"
@@ -102,7 +112,7 @@ function RenderSteps({
                     <CountDown initialMinute={5} />
                     <div className="p-4">
                         <h1 className="mb-4 text-center ">Enter OTP</h1>
-                        <OTPInput length={4} onChangeOTP={handleChangeOTP} />
+                        <OTPInput length={4} />
                     </div>
                 </>
             )}
@@ -115,10 +125,18 @@ function RenderSteps({
                     <PasswordReset />
                 </>
             )}
+            {pending ? <div className="loader  "></div> : null}
             <Button className="mt-4 w-full py-2" aria-disabled={pending}>
                 Reset Password
                 <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
             </Button>
+            <hr style={{ borderTop: '1px dashed #bbb', marginTop: '20px' }} />
+            <Link href={'/login'}>
+                <p className="cursor-pointer p-4 text-center text-blue-500">
+                    {isPasswordUpadted ?"Back to lgin ":"Have an account? Log in"}
+                </p>
+            </Link>
+
             <RenderErrorMsg error={error} success={success} />
         </>
     );
