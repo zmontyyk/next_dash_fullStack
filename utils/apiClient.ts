@@ -21,6 +21,30 @@ const apiClient = {
             throw error;
         }
     },
+    updateUser: async <T>(
+        userId: string,
+        key: string,
+        value: string,
+    ): Promise<T> => {
+        try {
+            const response = await fetch(API_BASE_URL + 'api/users', {
+                cache: 'no-store',
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId,
+                    key,
+                    value,
+                }),
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('GET request failed', error);
+            throw error;
+        }
+    },
 };
 
 export default apiClient;

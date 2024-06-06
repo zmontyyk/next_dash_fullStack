@@ -3,9 +3,11 @@ import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import apiClient from '@/utils/apiClient';
 import { unstable_noStore as noStore } from 'next/cache';
-import { resetPassword } from './server-actions';
+import { resetPassword, verifyOtpHandler } from './server-actions';
 import { mailHandler } from './utils';
-
+import { z } from 'zod';
+import validatePassword from '@/utils/validatePassword';
+import { redirect } from 'next/navigation';
 
 export async function authenticate(
     prevState: string | undefined,
@@ -35,6 +37,7 @@ export const authSingIn = async (
             message: string;
             status: number;
         } = await apiClient.newUser(formData);
+console.log(response);
 
         if (response.status === 201) {
             await signIn('credentials', formData);
@@ -53,6 +56,9 @@ type TUser = {
     steps: number;
     error: string | null;
     success: string | null;
+    email: string | null;
+    userId: string | null;
+    isPasswordUpadted: boolean;
 };
 
 export const authResetPassword = async (
@@ -65,23 +71,93 @@ export const authResetPassword = async (
                 formData.get('email') as string,
             );
 
+            prevState.email = formData.get('email') as string;
+            prevState.userId = getUser.id;
             if (getUser.status === 201) {
                 return {
+                    ...prevState,
                     steps: 1,
-                    error: null,
                     success: getUser.success,
                 };
             }
         }
 
         if (prevState.steps === 1) {
-            console.log('step 1');
+            // otp from client
+            const otp = formData.getAll('otp').join('');
+
+            // verifying otp
+            const verifyOtp = await verifyOtpHandler(
+                otp,
+                prevState.email as string,
+            );
+
+            if (verifyOtp?.status === 201) {
+                return {
+                    ...prevState,
+                    steps: 2,
+                    success: verifyOtp.success,
+                };
+            }
+
+            return {
+                ...prevState,
+                steps: 1,
+                error: verifyOtp?.error as string,
+                success: null,
+            };
+        }
+
+        if (prevState.steps === 2) {
+            const password = {
+                password: formData.get('password'),
+                confirmPassword: formData.get('rePassword'),
+            };
+            // checking if otp is vaild
+            const isvaild: any = validatePassword.safeParse(password);
+
+            // changing password
+            if (isvaild.success) {
+                const isPasswordUpadted: {
+                    status: number;
+                    messsage: string;
+                } = await apiClient.updateUser(
+                    prevState.userId as string,
+                    'password',
+                    formData.get('password') as string,
+                );
+
+                if (isPasswordUpadted.status === 201) {
+                    return {
+                        ...prevState,
+                        steps: 0,
+                        success: 'password updated successfully',
+                        error: null,
+                        isPasswordUpadted: true,
+                    };
+                }
+
+                return {
+                    ...prevState,
+                    steps: 2,
+                    error: isPasswordUpadted.messsage,
+                };
+            }
+
+            return {
+                ...prevState,
+                steps: 2,
+                error: "Passwords don't match",
+            };
         }
 
         return {
             steps: 0,
             error: 'Something went wrong please try again',
             success: null,
+            email: null,
+            userId: null,
+            isPasswordUpadted: false,
         };
     } catch (error) {
         if (error instanceof AuthError) {
@@ -89,6 +165,9 @@ export const authResetPassword = async (
                 steps: 0,
                 error: error.message,
                 success: null,
+                email: null,
+                userId: null,
+                isPasswordUpadted: false,
             };
         }
         throw error;

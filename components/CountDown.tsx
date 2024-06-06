@@ -38,7 +38,7 @@ const CountDown: React.FC<AppProps> = ({ initialMinute = 10, initialSeconds = 0 
 
   return (
     <div>
-      {minutes === 0 && seconds === 0 ? null : (
+      {minutes === 0 && seconds === 0 ? <p className=' text-red-500'>OTP EXPIRED</p> : (
         <h1>
          Expires in:  {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
         </h1>

@@ -20,6 +20,8 @@ export const GET = auth(async function GET(req) {
     return NextResponse.json(usersList);
 }) as any;
 
+
+
 export const POST = auth(async function (request) {
     await getMongoConnection();
     const userData = await request.json();
@@ -78,19 +80,13 @@ export const POST = auth(async function (request) {
 });
 
 export const PATCH = auth(async function (request) {
-    if (!request.auth)
-        return NextResponse.json(
-            { message: 'Not authenticated' },
-            { status: 401 },
-        );
-
     const body = await request.json();
-    const { email, password, userId } = body;
+    let { userId, key, value } = body;
 
-    if (!email && !password) {
+    if (!key || !value) {
         return new Response(
             JSON.stringify({
-                Message: 'please check credentials',
+                message: 'please try again',
             }),
             { status: 403 },
         );
@@ -101,31 +97,39 @@ export const PATCH = auth(async function (request) {
         if (!ObjectId.isValid(userId)) {
             return new Response(
                 JSON.stringify({
-                    Message: 'no user found',
+                    message: 'no user found',
                 }),
                 { status: 403 },
             );
         }
 
-        const updateUser = await Users.findOneAndUpdate(
+        if (key === 'password') {
+            // Generate salt
+            const salt = await bcrypt.genSalt(saltRounds);
+            // Hash the password
+            value = await bcrypt.hash(value, salt);
+        }
+
+        // Construct the update object dynamically
+        const updateObject: { [key: string]: any } = {};
+        updateObject[key] = value;
+
+         await Users.findOneAndUpdate(
             { _id: new ObjectId(userId) },
-            {
-                email: email,
-                password: password,
-            },
+            { $set: updateObject },
             { new: true },
         );
+
         return new Response(
             JSON.stringify({
-                Message: 'user updated',
-                updateUser,
+                message: 'user updated',
+                status: 201,
             }),
-            { status: 200 },
         );
     } catch (error) {
         return new Response(
             JSON.stringify({
-                Message: 'please check again',
+                message: 'please check again',
             }),
             { status: 400 },
         );
