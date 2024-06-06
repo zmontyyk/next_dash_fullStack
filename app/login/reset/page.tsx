@@ -84,7 +84,7 @@ function RenderSteps({
                                 color: 'gray',
                             }}
                         >
-                            Enter your email, and we'll send you an OTP to log
+                            Enter your email, and we&apos;ll send you an OTP to log
                             back into your account.
                         </p>
                     </label>
