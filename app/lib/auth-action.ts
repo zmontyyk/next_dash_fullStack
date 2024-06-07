@@ -37,7 +37,6 @@ export const authSingIn = async (
             message: string;
             status: number;
         } = await apiClient.newUser(formData);
-console.log(response);
 
         if (response.status === 201) {
             await signIn('credentials', formData);

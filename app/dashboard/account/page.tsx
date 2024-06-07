@@ -6,8 +6,6 @@ async function page() {
   const session = await auth()
   const ImageLink = session?.user?.image ?? "/account.png"
 
-  console.log(ImageLink);
-  
 
   return (
     <div> 

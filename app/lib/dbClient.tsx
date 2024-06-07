@@ -9,6 +9,7 @@ if (!MONGODB_URI) {
 }
 
 interface Cached {
+    Schema: any;
     conn: typeof mongoose | null;
     promise: Promise<typeof mongoose> | null;
 }
@@ -27,7 +28,7 @@ if (!cached) {
 
 async function getMongoConnection(): Promise<typeof mongoose> {
     if (cached.conn) {
-        console.log('Using existing database connection');
+        console.log('database already connected');
         return cached.conn;
     }
 
