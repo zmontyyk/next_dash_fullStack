@@ -9,6 +9,8 @@ import { unstable_noStore as noStore } from 'next/cache';
 const saltRounds = 10;
 
 export const GET = auth(async function GET(req) {
+    console.log(req);
+    
     if (!req.auth)
         return NextResponse.json(
             { message: 'Not authenticated' },

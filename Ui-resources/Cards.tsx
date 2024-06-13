@@ -1,12 +1,21 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@/app/dashboard/account/account.module.css";
 import { useSearchParams } from "next/navigation";
-import clsx from "clsx";
+import Spinner from "./Spinner";
 import Link from "next/link";
+import { getUserPosts } from "@/app/lib/server-actions";
 
-function Cards({ items }: any) {
+function Cards({ initialPost }: { initialPost: any }) {
     const params = useSearchParams();
+    const [postsData, setPostsData] = useState(initialPost);
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+
+    const loadMorePosts = async () => {
+       
+    };
+
     return (
         <>
             <div className={styles.tags}>
@@ -32,9 +41,11 @@ function Cards({ items }: any) {
                 </Link>
             </div>
 
-            <div className="bg-white">
-                <div className={styles.posts + " grid grid-cols-1 gap-y-10 "}>
-                    {items.map((item: any) => {
+            <div className="bg-white text-center">
+                <div
+                    className={styles.posts + " ppx grid grid-cols-1 gap-y-10"}
+                >
+                    {postsData.posts.map((item: any) => {
                         return (
                             <div key={item._id.toString()}>
                                 <div className={styles.postCrads}>
@@ -44,6 +55,16 @@ function Cards({ items }: any) {
                         );
                     })}
                 </div>
+
+                {loading && <Spinner height={20} width={20} />}
+                {!loading && hasMore && (
+                    <button
+                        onClick={() => loadMorePosts()}
+                        className="rounded border border-gray-400 bg-white px-4 py-0 font-semibold text-gray-700 shadow hover:bg-gray-100"
+                    >
+                        Load more
+                    </button>
+                )}
             </div>
         </>
     );

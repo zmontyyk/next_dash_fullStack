@@ -46,6 +46,23 @@ const apiClient = {
             throw error;
         }
     },
+    getUserPosts: async <T>(
+        limit: number,
+    ): Promise<T> => {
+        try {
+            const response = await fetch(API_BASE_URL + `api/feeds/posts?limit=${limit}`, {
+                cache: 'no-store',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('GET request failed', error);
+            throw error;
+        }
+    },
 };
 
 export default apiClient;

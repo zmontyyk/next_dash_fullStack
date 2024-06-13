@@ -11,6 +11,8 @@ import { Feeds } from '@/components/latestFeeds/Feeds';
 export default async function Page() {
     const latestInvoices = await fetchLatestInvoices();
     const session = await auth();
+    console.log(session);
+    
 
     return (
         <main>
