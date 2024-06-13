@@ -20,7 +20,7 @@ const links = [
     icon: DocumentDuplicateIcon,
   },
   { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
-  { name: 'Account', href: '/dashboard/account', icon: UserCircleIcon },
+  { name: 'Account', href: '/dashboard/account?tag=posts', icon: UserCircleIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog8ToothIcon },
 ];
 

@@ -1,25 +1,14 @@
-import React from 'react'
-import { auth } from '@/auth'
-import Image from 'next/image'
+import React from 'react';
+import HeroSection from '@/components/account/HeroSection';
+import PostsSection from '@/components/account/PostsSection';
 
-async function page() {
-  const session = await auth()
-  const ImageLink = session?.user?.image ?? "/account.png"
-
-
-  return (
-    <div> 
-       <h3>{session?.user?.name}</h3> <br/>
-       <h5> {session?.user?.email}</h5> <br/>
-       <Image
-            src={ImageLink}
-            height={100}
-            width={100}
-            className="hidden md:block"
-            alt="img"
-          />
-    </div>
-  )
+function page() {
+    return (
+        <div>
+            <HeroSection />
+            <PostsSection />
+        </div>
+    );
 }
 
-export default page
+export default page;

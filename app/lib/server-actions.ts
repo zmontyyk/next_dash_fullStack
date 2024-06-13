@@ -1,10 +1,14 @@
-import Revenue from '../models/Revenue';
-import { mailHandler } from './utils';
-import getMongoClient from './dbClient';
-import Users from '../models/Users';
-import { unstable_noStore as noStore } from 'next/cache';
-import Otp from '../models/Otp';
-import moment from 'moment';
+import Revenue from "../models/Revenue";
+import { mailHandler } from "./utils";
+import getMongoClient from "./dbClient";
+import Users from "../models/Users";
+import { unstable_noStore as noStore } from "next/cache";
+import Otp from "../models/Otp";
+import Post from "../models/Post";
+import moment from "moment";
+import { auth } from "@/auth";
+import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 function delay(time: number) {
     return new Promise<void>((resolve, reject) => {
@@ -22,8 +26,8 @@ export async function fetchRevenue() {
         const data = await Revenue.find({});
         return data;
     } catch (error) {
-        console.error('Database Error:', error);
-        throw new Error('Failed to fetch revenue data.');
+        console.error("Database Error:", error);
+        throw new Error("Failed to fetch revenue data.");
     }
 }
 
@@ -34,8 +38,8 @@ export async function fetchLatestInvoices() {
         const data = await Users.find({});
         return data;
     } catch (error) {
-        console.error('Database Error:', error);
-        throw new Error('Failed to fetch the latest invoices.');
+        console.error("Database Error:", error);
+        throw new Error("Failed to fetch the latest invoices.");
     }
 }
 
@@ -45,21 +49,21 @@ export async function resetPassword(email: string, password?: string) {
         status: number;
         error: string | null;
         success: string | null;
-        id:string | null
+        id: string | null;
     };
 
     const responseData: responseType = {
         status: 500,
         success: null,
         error: null,
-        id:null
+        id: null,
     };
     try {
         await getMongoClient();
         if (!email) {
             return {
                 status: 400,
-                success: 'No user found!',
+                success: "No user found!",
             };
         }
         const otp = (1000 + Math.random() * 9000).toFixed(0);
@@ -74,7 +78,7 @@ export async function resetPassword(email: string, password?: string) {
                 const otpRecord = await Otp.findOneAndUpdate(
                     { email },
                     { otp, createdAt: moment().unix() },
-                    { new: true, upsert: true },
+                    { new: true, upsert: true }
                 );
 
                 if (!otpRecord) {
@@ -87,16 +91,16 @@ export async function resetPassword(email: string, password?: string) {
                 }
             }
             if (!isSend.accepted) {
-                responseData.success = 'Unable to send otp please try again';
+                responseData.success = "Unable to send otp please try again";
                 responseData.status = 500;
             }
 
-            responseData.success = 'OTP Send To Your email';
+            responseData.success = "OTP Send To Your email";
             responseData.status = 201;
             responseData.id = user._id.toString();
         }
         if (!user) {
-            responseData.error = 'No user found!';
+            responseData.error = "No user found!";
             responseData.status = 500;
         }
 
@@ -121,28 +125,54 @@ export async function verifyOtpHandler(otp: string, email: string) {
         error: null,
     };
     if (!email || !otp) {
-        responseData.error = 'Email and OTP are required';
+        responseData.error = "Email and OTP are required";
         return responseData;
     }
 
     try {
         const storedOtp: any = await Otp.findOne({ email, otp });
         if (!storedOtp) {
-            responseData.error = 'Invalid OTP';
+            responseData.error = "Invalid OTP";
             return responseData;
         }
 
         const otpExpiryTime = storedOtp.createdAt + 5 * 60; // 5 minutes in seconds
         const currentTime = moment().unix(); // Current time in seconds
         if (currentTime > otpExpiryTime) {
-            responseData.error = 'OTP has expired';
+            responseData.error = "OTP has expired";
             return responseData;
         }
         // await Otp.findByIdAndDelete({ email });
 
-
-        responseData.success = 'OTP verified successfully';
+        responseData.success = "OTP verified successfully";
         responseData.status = 201;
         return responseData;
     } catch (error) {}
+}
+
+export async function getUserPosts() {
+
+    interface PostInterface {
+        _id: mongoose.Types.ObjectId;
+        // Add other properties of the post object here if needed
+    }
+
+    noStore();
+    await getMongoClient();
+
+    const session: any = await auth();
+
+    const posts: any = await Post.find({ user: new ObjectId(session.user._id) })
+        .populate("user")
+        .select({ user: 0})
+        .lean()
+        .then(posts => posts.map(post => {
+            const typedPost = post as PostInterface;  // Type assertion
+            return {
+                ...typedPost,
+                _id: typedPost._id.toString()
+            };
+        }))
+
+    return posts;
 }

@@ -13,6 +13,7 @@ const apiClient = {
                     name: credentials.get('Name'),
                     email: credentials.get('email'),
                     password: credentials.get('password'),
+                    avatar:credentials.get('avatar')
                 }),
             });
             return await response.json();

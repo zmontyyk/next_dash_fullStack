@@ -4,7 +4,7 @@ const MONGODB_URI = process.env.MONGODB_URI as string;
 
 if (!MONGODB_URI) {
     throw new Error(
-        'Please define the MONGODB_URI environment variable inside .env.local',
+    'Please define the MONGODB_URI environment variable inside .env',
     );
 }
 
@@ -23,7 +23,7 @@ declare global {
 let cached: Cached = global.mongoose;
 
 if (!cached) {
-    cached = global.mongoose = { conn: null, promise: null };
+    cached = global.mongoose = { conn: null, promise: null } as any ;
 }
 
 async function getMongoConnection(): Promise<typeof mongoose> {

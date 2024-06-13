@@ -17,6 +17,7 @@ export default {
             // sometimes the user get stored in token.user.userData
             // sometimes the user data get stored in just token.user
             session.user = token.user;
+            delete session.user.password;
             return session;
         },
         authorized: ({ auth, request }) => {
@@ -30,12 +31,12 @@ export default {
             }
             if (isLoggedin && request.nextUrl.pathname.includes('/login')) {
                 return NextResponse.redirect(
-                    new URL('/dashboard', request.url),
+                    new URL('/dashboard', request.url)
                 );
             }
             if (isLoggedin && request.nextUrl.pathname.includes('/singup')) {
                 return NextResponse.redirect(
-                    new URL('/dashboard', request.url),
+                    new URL('/dashboard', request.url)
                 );
             }
 

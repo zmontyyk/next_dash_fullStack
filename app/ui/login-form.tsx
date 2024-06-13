@@ -7,18 +7,19 @@ import {
     UserIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from './button';
+import { Button } from '../../Ui-resources/button';
 import { useFormState, useFormStatus } from 'react-dom';
 import { authenticate, authSingIn } from '../lib/auth-action';
 import { useState } from 'react';
 import Link from 'next/link';
-
+import CustomDropdown from '@/Ui-resources/CustomDropdown';
 
 export default function LoginForm({ value }: { value: string }) {
     const method = value === 'SingUp' ? authSingIn : authenticate;
 
     const [errorMessage, dispatch] = useFormState(method, undefined);
     const [showPassword, setShowPassword] = useState(false);
+    const [avtar, setAvtar] = useState<string | number>();
 
     return (
         <form action={dispatch} className="space-y-3">
@@ -166,6 +167,28 @@ export default function LoginForm({ value }: { value: string }) {
                         <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                     </div>
                 </div>
+
+                {value === 'SingUp' ? (
+                    <div className="avtarPicker mt-5 w-full">
+                        <input
+                            id="avatar"
+                            name="avatar"
+                            type="checkbox"
+                            value={avtar}
+                            checked={true}
+                            readOnly={true}
+                            style={{ display: 'none' }}
+                        />
+                        <CustomDropdown
+                            selectedAvtar={(selectedAvtar) =>
+                                setAvtar(selectedAvtar)
+                            }
+                            optionsLength={6}
+                            dropdownLable="Pick Avtar"
+                            pickAvtar={avtar}
+                        />
+                    </div>
+                ) : null}
             </div>
             <LoginButton value={value} />
             {value !== 'SingUp' ? (
@@ -203,7 +226,7 @@ function LoginButton({ value }: { value: string }) {
 
     return (
         <div className="creds">
-             {pending ? <div className="loader  "></div> : null}
+            {pending ? <div className="loader  "></div> : null}
             <Button className="mt-4 w-full" aria-disabled={pending}>
                 {value == 'SingUp' ? 'Sing up' : 'Log in'}
                 <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />

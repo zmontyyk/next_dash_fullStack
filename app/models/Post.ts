@@ -8,8 +8,8 @@ const PostSchema = new Schema(
             ref: 'User',
             required: true,
         },
-        content: { type: String },
         image: { type: String },
+        content: { type: String },
         timestamp: { type: Date, default: Date.now },
     },
     {
@@ -20,3 +20,4 @@ const PostSchema = new Schema(
 const Post = models.Post || model('Post', PostSchema);
 
 export default Post;
+

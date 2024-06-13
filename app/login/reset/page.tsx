@@ -12,7 +12,7 @@ import {
 import { useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import RenderInputSvg from '@/components/RenderInputSvg';
-import { Button } from '@/app/ui/button';
+import { Button } from '@/Ui-resources/button';
 import OTPInput from '@/components/logins/OTPInput';
 import PasswordReset from '@/components/logins/PasswordReset';
 import RenderErrorMsg from '@/components/RenderErrorMsg';

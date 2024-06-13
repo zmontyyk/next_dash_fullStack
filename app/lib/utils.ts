@@ -12,16 +12,15 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-export const mailHandler = async (email: string,otp:string) => {
+export const mailHandler = async (email: string, otp: string) => {
     try {
         return await transporter.sendMail({
-            from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
+            from: '"Stakes 👻" <maddison53@ethereal.email>', // sender address
             to: email, // list of receivers
-            subject: 'Hello ✔', // Subject line
-            text: 'Hello world?', // plain text body
-            html: `<b>HERE IS THE RESET ${otp}</b> <br/>
-    <b>Vaild for 10 mints</b>
-    <b>RESET PASSWORD</b>`, // html body
+            subject: 'OTP', // Subject line
+            text: 'Login To Stakes', // plain text body
+            html: `<b>Here is your login code to access your account: ${otp}</b> <br/>
+    <b>Vaild for 10 mints</b>`, // html body
         });
     } catch (error: any) {
         return error;
@@ -37,7 +36,7 @@ export const formatCurrency = (amount: number) => {
 
 export const formatDateToLocal = (
     dateStr: string,
-    locale: string = 'en-US',
+    locale: string = 'en-US'
 ) => {
     const date = new Date(dateStr);
     const options: Intl.DateTimeFormatOptions = {

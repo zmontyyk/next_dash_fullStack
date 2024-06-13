@@ -32,3 +32,18 @@ input[type='number']::-webkit-outer-spin-button {
   66%  {background-position: 250% 0,-150% 0}
   100% {background-position: 250% 0, 250% 0}
 }
+
+@media (max-width: 768px) {
+  .public_logo{
+    height: 130px;
+  }
+}
+
+.active-text span{
+  color: rgb(0, 0, 0);
+  font-weight: 800;
+}
+.ig-secondary-text{
+  color: rgb(115, 115, 115);
+  font-weight: 800;
+}
