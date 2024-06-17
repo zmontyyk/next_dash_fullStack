@@ -1,12 +1,11 @@
 "use server"
 import React from 'react'
 
-function page() {
-  console.log('wquhduiqwhdiwuqhdiuqwh');
+function Messages() {
   
   return (
     <div>invoices page</div>
   )
 }
 
-export default page
+export default Messages

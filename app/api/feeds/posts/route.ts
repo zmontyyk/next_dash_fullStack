@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export const POST = auth(async function (req) {
     if (!req.auth) {
@@ -43,15 +44,41 @@ export const POST = auth(async function (req) {
     }
 });
 
-export const GET = auth(async (req) => {
+export const GET = auth(async (req:any) => {
+    interface PostInterface {
+        _id: mongoose.Types.ObjectId;
+    }
+    await getMongoConnection();
+    
+    // getting query params
+    const limit =  req.nextUrl.searchParams.get('limit')
+    console.log(limit);
+    
 
-console.log(req.auth);
-
-return new Response(
-    JSON.stringify({
-        message: "",
-    }),
-    { status: 500 }
-);
-
+    const countPost = await Post.find({
+        user: new ObjectId(req?.auth?.user?._id),
+    }).countDocuments();
+    const posts: any = await Post.find({
+        user: new ObjectId(req?.auth?.user?._id),
+    })
+        .populate("user")
+        .select({ user: 0 })
+        .lean()
+        .limit(limit)
+        .then((posts) =>
+            posts.map((post) => {
+                const typedPost = post as PostInterface; // Type assertion
+                return {
+                    ...typedPost,
+                    _id: typedPost._id.toString(),
+                };
+            })
+        );
+    return new Response(
+        JSON.stringify({
+            posts: posts,
+            totalPosts: countPost,
+        }),
+        { status: 500 }
+    );
 });

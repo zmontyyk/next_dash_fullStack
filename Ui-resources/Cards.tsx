@@ -4,7 +4,9 @@ import styles from "@/app/dashboard/account/account.module.css";
 import { useSearchParams } from "next/navigation";
 import Spinner from "./Spinner";
 import Link from "next/link";
-import { getUserPosts } from "@/app/lib/server-actions";
+import { useSession } from "next-auth/react";
+import { getMorePosts } from "@/app/lib/auth-action";
+import { DEFAULT_POSTS } from "@/utils/constants";
 
 function Cards({ initialPost }: { initialPost: any }) {
     const params = useSearchParams();
@@ -13,7 +15,24 @@ function Cards({ initialPost }: { initialPost: any }) {
     const [hasMore, setHasMore] = useState(true);
 
     const loadMorePosts = async () => {
-       
+        setLoading(true);
+        try {
+            if (hasMore) {
+                const response: any = await getMorePosts(
+                    postsData.posts.length + DEFAULT_POSTS
+                );
+
+                setPostsData((preVal: any) => ({
+                    ...preVal,
+                    posts: response.posts,
+                    totalPosts: response.totalPosts,
+                }));
+                setLoading(false);
+                if (postsData.posts.length >= postsData.totalPosts) {
+                    setHasMore(false);
+                }
+            }
+        } catch (error) {}
     };
 
     return (
@@ -45,7 +64,7 @@ function Cards({ initialPost }: { initialPost: any }) {
                 <div
                     className={styles.posts + " ppx grid grid-cols-1 gap-y-10"}
                 >
-                    {postsData.posts.map((item: any) => {
+                    {postsData?.posts?.map((item: any) => {
                         return (
                             <div key={item._id.toString()}>
                                 <div className={styles.postCrads}>
@@ -60,7 +79,8 @@ function Cards({ initialPost }: { initialPost: any }) {
                 {!loading && hasMore && (
                     <button
                         onClick={() => loadMorePosts()}
-                        className="rounded border border-gray-400 bg-white px-4 py-0 font-semibold text-gray-700 shadow hover:bg-gray-100"
+                        style={{ margin: "auto", marginTop: "30px" }}
+                        className="flex rounded  border border-gray-400 bg-white px-4 py-0 font-semibold text-gray-700 shadow hover:bg-gray-100"
                     >
                         Load more
                     </button>
