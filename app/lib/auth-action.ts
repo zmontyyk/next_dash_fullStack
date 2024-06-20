@@ -1,7 +1,7 @@
 "use server";
 import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
-import apiClient from "@/utils/apiClient";
+import {newUser, updateUser} from "@/utils/apiClient";
 import { unstable_noStore as noStore } from "next/cache";
 import { resetPassword, verifyOtpHandler } from "./server-actions";
 import { mailHandler } from "./utils";
@@ -37,7 +37,7 @@ export const authSingIn = async (
         const response: {
             message: string;
             status: number;
-        } = await apiClient.newUser(formData);
+        } = await newUser(formData)
 
         if (response.status === 201) {
             await signIn("credentials", formData);
@@ -121,7 +121,7 @@ export const authResetPassword = async (
                 const isPasswordUpadted: {
                     status: number;
                     messsage: string;
-                } = await apiClient.updateUser(
+                } = await updateUser(
                     prevState.userId as string,
                     "password",
                     formData.get("password") as string
@@ -174,12 +174,12 @@ export const authResetPassword = async (
     }
 };
 
-export const getMorePosts = async (limit:number) => {
-    try {
-        const response = await apiClient.getUserPosts(limit);    
-        return response;
-    } catch (error) {
-        return error
-    }
+// export const getMorePosts = async (limit:number) => {
+//     try {
+//         const response = await apiClient.getUserPosts(limit);    
+//         return response;
+//     } catch (error) {
+//         return error
+//     }
    
-};
+// };

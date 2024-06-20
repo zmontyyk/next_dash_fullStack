@@ -45,6 +45,8 @@ export const POST = auth(async function (req) {
 });
 
 export const GET = auth(async (req:any) => {
+
+    
     interface PostInterface {
         _id: mongoose.Types.ObjectId;
     }
@@ -52,7 +54,6 @@ export const GET = auth(async (req:any) => {
     
     // getting query params
     const limit =  req.nextUrl.searchParams.get('limit')
-    console.log(limit);
     
 
     const countPost = await Post.find({

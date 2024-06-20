@@ -9,7 +9,7 @@ function HeroSectiom({ totalPostCount }: { totalPostCount: number }) {
         <div className="flex justify-between p-14">
             <div className="profile-header">
                 <Image
-                    src={`/profileAvtars/${session?.user?.avatar != "default" ? JSON.parse(session.user.avatar) : "default"}.png`}
+                    src={`/profileAvtars/${session?.user?.avatar !== "default" || !session.user.avatar  ? JSON.parse(session.user.avatar) : "default"}.png`}
                     height={100}
                     width={100}
                     className="profile-pic"

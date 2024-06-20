@@ -9,7 +9,7 @@ import moment from "moment";
 import { auth } from "@/auth";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
-import apiClient from "@/utils/apiClient";
+
 
 function delay(time: number) {
     return new Promise<void>((resolve, reject) => {
@@ -151,11 +151,11 @@ export async function verifyOtpHandler(otp: string, email: string) {
     } catch (error) {}
 }
 
-export async function getMorePosts(limit: number) {
-    try {
-        const response = await apiClient.getUserPosts(limit);
-        return response;
-    } catch (error) {
-        return error;
-    }
-}
+// export async function getMorePosts(limit: number) {
+//     try {
+//         const response = await apiClient.getUserPosts(limit);
+//         return response;
+//     } catch (error) {
+//         return error;
+//     }
+// }
