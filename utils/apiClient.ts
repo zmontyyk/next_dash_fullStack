@@ -1,8 +1,10 @@
 "use server";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 import { cookies } from "next/headers";
+const nextCookies = cookies();
+const nextAuthSessionToken = nextCookies.get("authjs.session-token");
 
- const newUser = async <T>(credentials: FormData): Promise<T> => {
+const newUser = async <T>(credentials: FormData): Promise<T> => {
     try {
         const response = await fetch(API_BASE_URL + "api/users", {
             cache: "no-store",
@@ -24,7 +26,7 @@ import { cookies } from "next/headers";
     }
 };
 
- const updateUser = async <T>(
+const updateUser = async <T>(
     userId: string,
     key: string,
     value: string
@@ -49,9 +51,7 @@ import { cookies } from "next/headers";
     }
 };
 
- const getUserPosts = async <T>(limit: number): Promise<T> => {
-    const nextCookies = cookies();
-    const nextAuthSessionToken = nextCookies.get("authjs.session-token");
+const getUserPosts = async <T>(limit: number): Promise<T> => {
     try {
         const response = await fetch(
             API_BASE_URL + `/api/feeds/posts?limit=${limit}`,
@@ -69,10 +69,66 @@ import { cookies } from "next/headers";
         throw error;
     }
 };
+const IndividualPostByID = async <T>(id: string | null): Promise<T> => {
+    try {
+        const response = await fetch(
+            API_BASE_URL + `/api/feeds/post-by-id?id=${id}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Cookie: `authjs.session-token=${nextAuthSessionToken?.value}`,
+                },
+            }
+        );
+        return await response.json();
+    } catch (error) {
+        console.error("GET request failed", error);
+        throw error;
+    }
+};
+const getAllFollowers = async <T>(): Promise<T> => {
+    try {
+        const response = await fetch(
+            API_BASE_URL + `/api/services/get-user-by-id`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Cookie: `authjs.session-token=${nextAuthSessionToken?.value}`,
+                },
+            }
+        );
+        return await response.json();
+    } catch (error) {
+        console.error("failed to get followers", error);
+        throw error;
+    }
+};
 
+const verifyCaptcha = async <T>(token?: string | null): Promise<T> => {
+    try {
+        const response = await fetch(
+            `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        return await response.json();
+    } catch (error) {
+        console.error("failed to get followers", error);
+        throw error;
+    }
+};
 
-export   {
+export {
     newUser,
     updateUser,
     getUserPosts,
+    IndividualPostByID,
+    getAllFollowers,
+    verifyCaptcha,
 };

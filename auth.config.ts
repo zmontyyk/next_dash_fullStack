@@ -1,6 +1,6 @@
-'use sever';
-import type { NextAuthConfig } from 'next-auth';
-import { NextResponse } from 'next/server';
+"use sever";
+import type { NextAuthConfig } from "next-auth";
+import { NextResponse } from "next/server";
 
 // Notice this is only an object, not a full Auth.js instance
 export default {
@@ -22,21 +22,20 @@ export default {
         },
         authorized: ({ auth, request }) => {
             const isLoggedin = auth?.user;
-
             if (
                 !isLoggedin &&
-                request.nextUrl.pathname.includes('/dashboard')
+                request.nextUrl.pathname.includes("/dashboard")
             ) {
-                return NextResponse.redirect(new URL('/login', request.url));
+                return NextResponse.redirect(new URL("/login", request.url));
             }
-            if (isLoggedin && request.nextUrl.pathname.includes('/login')) {
+            if (isLoggedin && request.nextUrl.pathname.includes("/login")) {
                 return NextResponse.redirect(
-                    new URL('/dashboard', request.url)
+                    new URL("/dashboard", request.url)
                 );
             }
-            if (isLoggedin && request.nextUrl.pathname.includes('/singup')) {
+            if (isLoggedin && request.nextUrl.pathname.includes("/singup")) {
                 return NextResponse.redirect(
-                    new URL('/dashboard', request.url)
+                    new URL("/dashboard", request.url)
                 );
             }
 

@@ -1,11 +1,13 @@
-"use server"
-import React from 'react'
+import React from "react";
+import UserLists from "./UserLists";
+
 
 function Messages() {
-  
-  return (
-    <div>invoices page</div>
-  )
+    return (
+        <div>
+            <UserLists/>
+        </div>
+    );
 }
 
-export default Messages
+export default Messages;

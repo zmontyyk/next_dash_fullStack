@@ -6,20 +6,22 @@ import Spinner from "../../Ui-resources/Spinner";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { DEFAULT_POSTS } from "@/utils/constants";
-import { hitDemo } from "@/utils/apiHIts";
 import { getUserPosts } from "@/utils/apiClient";
+import { postsResponse } from "@/utils/definitions";
+import IndividualPost from "./IndividualPost";
 
-function PostsSection({ initialPost }: { initialPost: any }) {
+function PostsSection({ initialPost }: { initialPost: postsResponse }) {
     const params = useSearchParams();
+    const session = useSession();
     const [postsData, setPostsData] = useState(initialPost);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [isModalActive, setisModalActive] = useState(false);
+    const [individualPost, SetIndividualPost] = useState<string | null>(null);
 
-    useEffect(() => {
-        // const data = async ()=>{
-        //          return await hitDemo()
-        // }
-    }, []);
+    const closeModal = () => {
+        setisModalActive(false);
+    };
 
     const loadMorePosts = async () => {
         setLoading(true);
@@ -29,7 +31,7 @@ function PostsSection({ initialPost }: { initialPost: any }) {
                     postsData.posts.length + DEFAULT_POSTS
                 );
 
-                setPostsData((preVal: any) => ({
+                setPostsData((preVal: postsResponse) => ({
                     ...preVal,
                     posts: response.posts,
                     totalPosts: response.totalPosts,
@@ -39,11 +41,19 @@ function PostsSection({ initialPost }: { initialPost: any }) {
                     setHasMore(false);
                 }
             }
-        } catch (error) {}
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
         <>
+            {isModalActive ? (
+                <IndividualPost
+                    closeModal={closeModal}
+                    IndividualPostID={individualPost}
+                />
+            ) : null}
             <div className={styles.tags}>
                 <Link
                     className={
@@ -68,13 +78,18 @@ function PostsSection({ initialPost }: { initialPost: any }) {
             </div>
 
             <div className="bg-white text-center">
-                <div
-                    className={styles.posts + " ppx grid grid-cols-1 gap-y-10"}
-                >
+                <div className={styles.posts + " ppx grid grid-cols-1 gap-0"}>
                     {postsData?.posts?.map((item: any) => {
                         return (
-                            <div key={item._id.toString()}>
-                                <div className={styles.postCrads}>
+                            <div
+                                onClick={() => {SetIndividualPost(item._id),setisModalActive(true)}}
+                                key={item._id.toString()}
+                            >
+                                <div
+                                    className={
+                                        styles.postCrads + " cursor-pointer"
+                                    }
+                                >
                                     <img src={item.image} alt={item.image} />
                                 </div>
                             </div>

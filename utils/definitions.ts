@@ -26,3 +26,21 @@ export type postsResponse = {
   posts: Post[];
   totalPosts: number;
 };
+
+
+export interface User {
+  map(arg0: () => void): import("react").ReactNode;
+  _id: string;
+  name: string;
+  email: string;
+  username: string;
+  isActive: boolean;
+  status: string | null;
+  updatedAt: number;
+  avatar: string;
+  bio: string | null;
+  followers: string[];
+  following: string[];
+  createdAt: string;
+  __v: number;
+}

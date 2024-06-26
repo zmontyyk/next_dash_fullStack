@@ -3,8 +3,7 @@ import Post from "@/app/models/Post";
 import { auth } from "@/auth";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
-import { NextResponse } from "next/server";
-import { NextRequest } from "next/server";
+
 
 export const POST = auth(async function (req) {
     if (!req.auth) {

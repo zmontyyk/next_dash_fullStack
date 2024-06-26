@@ -1,7 +1,6 @@
 import React from "react";
 import HeroSection from "@/components/account/HeroSection";
 import PostsSection from "@/components/account/PostsSection"
-// import  from "@/utils/apiClient";
 import {getUserPosts} from "@/utils/apiClient";
 import { DEFAULT_POSTS } from "@/utils/constants";
 import { postsResponse } from "@/utils/definitions";

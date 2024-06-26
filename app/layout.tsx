@@ -3,6 +3,7 @@ import { inter } from '@/app/ui/fonts';
 import { SessionProvider } from 'next-auth/react';
 import { auth } from '@/auth';
 
+
 export default async function RootLayout({
     children,
 }: {

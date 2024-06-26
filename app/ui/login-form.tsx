@@ -13,6 +13,8 @@ import { authenticate, authSingIn } from "../lib/auth-action";
 import { useState } from "react";
 import Link from "next/link";
 import CustomDropdown from "@/Ui-resources/CustomDropdown";
+import ReCAPTCHA from "react-google-recaptcha";
+import { verifyCaptcha } from "@/utils/apiClient";
 
 export default function LoginForm({ value }: { value: string }) {
     const method = value === "SingUp" ? authSingIn : authenticate;
@@ -20,6 +22,25 @@ export default function LoginForm({ value }: { value: string }) {
     const [errorMessage, dispatch] = useFormState(method, undefined);
     const [showPassword, setShowPassword] = useState(false);
     const [avtar, setAvtar] = useState<string | number>("default");
+    const [verified, setVerified] = useState(false);
+
+    const onChange = async (value: string | null) => {
+        interface verifyToken {    
+            challenge_ts: string;
+            hostname: string;
+            success: boolean;
+        }
+
+        try {
+            const verifyToken: verifyToken = await verifyCaptcha(value);
+
+            if (verifyToken.success) {
+                setVerified(!!value);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <form action={dispatch} className="space-y-3">
@@ -190,7 +211,11 @@ export default function LoginForm({ value }: { value: string }) {
                     </div>
                 ) : null}
             </div>
-            <LoginButton value={value} />
+            <ReCAPTCHA
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
+                onChange={onChange}
+            />
+            <LoginButton value={value} verified={verified} />
             {value !== "SingUp" ? (
                 <>
                     <hr style={{ borderTop: "1px dashed #bbb" }} />
@@ -221,13 +246,29 @@ export default function LoginForm({ value }: { value: string }) {
     );
 }
 
-function LoginButton({ value }: { value: string }) {
+function LoginButton({
+    value,
+    verified,
+}: {
+    value: string;
+    verified: boolean;
+}) {
     const { pending } = useFormStatus();
 
     return (
         <div className="creds">
             {pending ? <div className="loader  "></div> : null}
-            <Button className="mt-4 w-full" aria-disabled={pending}>
+            <Button
+                className="mt-4 w-full"
+                style={
+                    pending || !verified
+                        ? {
+                              background: "rgb(229, 229, 229)",
+                              cursor: "not-allowed",
+                          }
+                        : {}
+                }
+            >
                 {value == "SingUp" ? "Sing up" : "Log in"}
                 <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
             </Button>

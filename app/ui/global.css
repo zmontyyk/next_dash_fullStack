@@ -113,6 +113,18 @@ input[type='number']::-webkit-outer-spin-button {
   height: 100px;
   margin-right: 20px;
 }
+.profile-header {
+  display: flex;
+  align-items: center;
+  padding: 13px;
+}
+
+.followersProfilePic {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+}
 
 .profile-info {
   flex: 1;
@@ -203,3 +215,11 @@ input[type='number']::-webkit-outer-spin-button {
 .hashtag {
   color: #00376b;
 }
+
+.closeModal {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-right: 10px;
+  padding: 5px 5px 0 0;
+}
+
