@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 
 function HeroSectiom({ totalPostCount }: { totalPostCount: number }) {
     const session: any = useSession().data;
-    console.log(session); 
     
     return (
         <div className="flex justify-between p-14">

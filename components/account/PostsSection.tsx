@@ -9,6 +9,7 @@ import { DEFAULT_POSTS } from "@/utils/constants";
 import { getUserPosts } from "@/utils/apiClient";
 import { postsResponse } from "@/utils/definitions";
 import IndividualPost from "./IndividualPost";
+import Image from "next/image";
 
 function PostsSection({ initialPost }: { initialPost: postsResponse }) {
     const params = useSearchParams();
@@ -90,7 +91,8 @@ function PostsSection({ initialPost }: { initialPost: postsResponse }) {
                                         styles.postCrads + " cursor-pointer"
                                     }
                                 >
-                                    <img src={item.image} alt={item.image} />
+                                    {/* <img src={item.image} alt={item.image} /> */}
+                                    <Image src={item.image} width={100} height={100} alt={item.image}   />
                                 </div>
                             </div>
                         );

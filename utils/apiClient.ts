@@ -1,10 +1,10 @@
 "use server";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 import { cookies } from "next/headers";
-const nextCookies = cookies();
-const nextAuthSessionToken = nextCookies.get("authjs.session-token");
 
 const newUser = async <T>(credentials: FormData): Promise<T> => {
+    const nextCookies = cookies();
+    const nextAuthSessionToken = nextCookies.get("authjs.session-token");
     try {
         const response = await fetch(API_BASE_URL + "api/users", {
             cache: "no-store",
@@ -31,6 +31,8 @@ const updateUser = async <T>(
     key: string,
     value: string
 ): Promise<T> => {
+    const nextCookies = cookies();
+    const nextAuthSessionToken = nextCookies.get("authjs.session-token");
     try {
         const response = await fetch(API_BASE_URL + "api/users", {
             cache: "no-store",
@@ -52,6 +54,8 @@ const updateUser = async <T>(
 };
 
 const getUserPosts = async <T>(limit: number): Promise<T> => {
+    const nextCookies = cookies();
+    const nextAuthSessionToken = nextCookies.get("authjs.session-token");
     try {
         const response = await fetch(
             API_BASE_URL + `/api/feeds/posts?limit=${limit}`,
@@ -70,6 +74,8 @@ const getUserPosts = async <T>(limit: number): Promise<T> => {
     }
 };
 const IndividualPostByID = async <T>(id: string | null): Promise<T> => {
+    const nextCookies = cookies();
+    const nextAuthSessionToken = nextCookies.get("authjs.session-token");
     try {
         const response = await fetch(
             API_BASE_URL + `/api/feeds/post-by-id?id=${id}`,
@@ -87,11 +93,15 @@ const IndividualPostByID = async <T>(id: string | null): Promise<T> => {
         throw error;
     }
 };
+
 const getAllFollowers = async <T>(): Promise<T> => {
+    const nextCookies = cookies();
+    const nextAuthSessionToken = nextCookies.get("authjs.session-token");
     try {
         const response = await fetch(
             API_BASE_URL + `/api/services/get-user-by-id`,
             {
+                cache: "no-store",
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -107,6 +117,8 @@ const getAllFollowers = async <T>(): Promise<T> => {
 };
 
 const verifyCaptcha = async <T>(token?: string | null): Promise<T> => {
+    const nextCookies = cookies();
+    const nextAuthSessionToken = nextCookies.get("authjs.session-token");
     try {
         const response = await fetch(
             `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,

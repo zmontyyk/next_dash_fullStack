@@ -6,45 +6,49 @@ import {
     HeartIcon,
     ChatBubbleBottomCenterIcon,
     PaperAirplaneIcon,
-    XMarkIcon
+    XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 const IndividualPost = ({
     IndividualPostID,
-    closeModal
+    closeModal,
 }: {
     IndividualPostID: string | null;
-    closeModal: ()=> void
+    closeModal: () => void;
 }) => {
     const [post, setPost] = useState<any>();
-    const getPostById = async (IndividualPostID: string | null) => {
-        const post = await IndividualPostByID(IndividualPostID);
-        setPost(post);
-    };
+    // const getPostById = async (IndividualPostID: string | null) => {
+    //     const post = await IndividualPostByID(IndividualPostID);
+    //     setPost(post);
+    // };
     useEffect(() => {
-        getPostById(IndividualPostID);
+        // getPostById(IndividualPostID);
     }, []);
-// console.log(post); v
+    // console.log(post); v
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="flex w-full max-w-4xl overflow-hidden rounded-lg bg-white" style={{height:"80%",maxWidth:"80%"}} >
-         
+            <div
+                className="flex w-full max-w-4xl overflow-hidden rounded-lg bg-white"
+                style={{ height: "80%", maxWidth: "80%" }}
+            >
                 <div className="w-2/3">
-                    <img
+                    {/* <img
                         src="/mnt/data/image.png"
                         alt="Instagram post"
                         className="h-full w-full object-cover"
-                    />
+                    /> */}
                 </div>
                 <div className="flex w-1/3 flex-col">
-                <span className="closeModal" onClick={(()=>closeModal())} >X</span>
+                    <span className="closeModal" onClick={() => closeModal()}>
+                        X
+                    </span>
                     <div className="flex items-center border-b p-4">
-                        <img
+                        {/* <img
                             src="profile_picture_url"
                             alt="profile"
                             className="mr-4 h-10 w-10 rounded-full"
-                        />
+                        /> */}
                         <span className="font-bold">leomessi</span>
                     </div>
                     <div className="border-b p-4">

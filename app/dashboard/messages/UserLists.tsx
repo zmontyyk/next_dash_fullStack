@@ -5,15 +5,16 @@ import { User } from "@/utils/definitions";
 import Link from "next/link";
 
 const UserLists = async () => {
-    const followers: any = await getAllFollowers();
+    const response: any = await getAllFollowers();
+    
 
     return (
         <React.Fragment>
-            {followers.map((item: any, index: number) => {
+            {response.followers.map((item: any, index: number) => {
                 return (
                     <Link
                         href={`/dashboard/messages/${item._id}`}
-                        as={"/dashboard/messages/chats"}
+                        key={index}
                     >
                         <div
                             key={index}

@@ -1,6 +1,8 @@
 "use client";
+import { useParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { useSession, SessionContextValue } from "next-auth/react";
 
 interface ChatProps {
     room: string;
@@ -11,28 +13,33 @@ interface Message {
     message: string;
 }
 
-const page: React.FC<ChatProps> = ({ room }) => {
+const Page: React.FC = () => {
+    const { peerID } = useParams<{ peerID: string }>();
+    const { data: session } = useSession() as SessionContextValue;
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState<string>("");
     const socketRef = useRef<Socket | null>(null);
 
+    // Unique room ID
+    const room: string = [peerID, session?.user?.id].sort().join("-");
+
     useEffect(() => {
         socketRef.current = io("http://localhost:5000");
 
-        socketRef.current.on("connect", () => {
+        socketRef.current?.on("connect", () => {
             console.log("Connected with socket ID:", socketRef.current?.id);
-            socketRef.current?.emit("joinRoom", room);
         });
 
-        socketRef.current.on("message", (message: Message) => {
-            console.log(message);
+        socketRef.current?.emit("join-room", { room });
 
-            setMessages((preval) => [...preval, message]);
+        socketRef.current?.on("msg-recieve", (data: any) => {
+            console.log(data);
+            setMessages((prev) => [...prev, data]);
         });
-        socketRef.current.on("previousMessages", (message: Message) => {
-            console.log(message);
 
-            setMessages((preval) => [...preval, ...(message as any)]);
+        socketRef.current?.on("previous-messages", (messages: Message[]) => {
+            console.log(messages);
+            setMessages(messages);
         });
 
         return () => {
@@ -43,25 +50,21 @@ const page: React.FC<ChatProps> = ({ room }) => {
     const sendMessage = () => {
         if (input.trim() && socketRef.current) {
             socketRef.current.emit("message", {
+                from: session?.user?.id,
+                to: peerID,
                 room,
-                message: input,
+                msg: input,
             });
             setInput("");
         }
     };
-    console.log(messages);
 
     return (
         <div>
             <div>
                 {messages.map((msg, index) => (
                     <div key={index}>
-                        <strong>
-                            {msg.userId === socketRef.current?.id
-                                ? "You"
-                                : msg.userId}
-                            :
-                        </strong>{" "}
+                        <strong>{msg.userId === session?.user?.id ? "You" : "Other user"}: </strong>
                         {msg.message}
                     </div>
                 ))}
@@ -81,4 +84,4 @@ const page: React.FC<ChatProps> = ({ room }) => {
     );
 };
 
-export default page;
+export default Page;

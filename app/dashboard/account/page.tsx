@@ -1,3 +1,4 @@
+"use server"
 import React from "react";
 import HeroSection from "@/components/account/HeroSection";
 import PostsSection from "@/components/account/PostsSection"
