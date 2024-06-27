@@ -99,7 +99,28 @@ const getAllFollowers = async <T>(): Promise<T> => {
     const nextAuthSessionToken = nextCookies.get("authjs.session-token");
     try {
         const response = await fetch(
-            API_BASE_URL + `/api/services/get-user-by-id`,
+            API_BASE_URL + `/api/services/get-followers`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Cookie: `authjs.session-token=${nextAuthSessionToken?.value}`,
+                },
+            }
+        );
+        return await response.json();
+    } catch (error) {
+        console.error("failed to get followers", error);
+        throw error;
+    }
+};
+
+const getUserById = async <T>(userID?: string): Promise<T> => {
+    const nextCookies = cookies();
+    const nextAuthSessionToken = nextCookies.get("authjs.session-token");
+    try {
+        const response = await fetch(
+            API_BASE_URL + `/api/services/get-user-by-id?userID=${userID}`,
             {
                 cache: "no-store",
                 method: "GET",
@@ -111,7 +132,7 @@ const getAllFollowers = async <T>(): Promise<T> => {
         );
         return await response.json();
     } catch (error) {
-        console.error("failed to get followers", error);
+        console.error("failed to get user by id", error);
         throw error;
     }
 };
@@ -143,4 +164,5 @@ export {
     IndividualPostByID,
     getAllFollowers,
     verifyCaptcha,
+    getUserById,
 };

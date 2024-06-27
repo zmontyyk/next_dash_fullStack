@@ -40,15 +40,10 @@ io.on("connection", (socket) => {
         socket.emit("previous-messages", messages);
     });
 
-    // socket.on('joinRoom', async (room) => {
-    //     socket.join(room);
-    //     console.log(`User ${socket.id} joined room ${room}`);
-
-    //     // Send previous messages to the user
-
-    // });
-
     socket.on("message", async ({ from, to, room, msg }) => {
+        console.log(from)
+        console.log(to)
+        console.log(room)
         // const msg = new Message({ room, userId: socket.id, message });
         // await msg.save();
 

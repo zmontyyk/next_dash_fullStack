@@ -44,3 +44,19 @@ export interface User {
   createdAt: string;
   __v: number;
 }
+
+
+export interface UserProfile {
+  avatar: string;
+  bio: string;
+  createdAt: string;
+  email: string;
+  followers: string[];
+  following: string[];
+  isActive: boolean;
+  name: string;
+  status: string | null;
+  updatedAt: number;
+  username: string;
+  _id: string;
+}
