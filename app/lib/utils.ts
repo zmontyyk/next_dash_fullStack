@@ -1,5 +1,5 @@
 'use server';
-import { Revenue } from './definitions';
+
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
@@ -12,16 +12,15 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-export const mailHandler = async (email: string,otp:string) => {
+export const mailHandler = async (email: string, otp: string) => {
     try {
         return await transporter.sendMail({
-            from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
+            from: '"Stakes 👻" <maddison53@ethereal.email>', // sender address
             to: email, // list of receivers
-            subject: 'Hello ✔', // Subject line
-            text: 'Hello world?', // plain text body
-            html: `<b>HERE IS THE RESET ${otp}</b> <br/>
-    <b>Vaild for 10 mints</b>
-    <b>RESET PASSWORD</b>`, // html body
+            subject: 'OTP', // Subject line
+            text: 'Login To Stakes', // plain text body
+            html: `<b>Here is your login code to access your account: ${otp}</b> <br/>
+    <b>Vaild for 10 mints</b>`, // html body
         });
     } catch (error: any) {
         return error;
@@ -37,7 +36,7 @@ export const formatCurrency = (amount: number) => {
 
 export const formatDateToLocal = (
     dateStr: string,
-    locale: string = 'en-US',
+    locale: string = 'en-US'
 ) => {
     const date = new Date(dateStr);
     const options: Intl.DateTimeFormatOptions = {
@@ -49,19 +48,6 @@ export const formatDateToLocal = (
     return formatter.format(date);
 };
 
-export const generateYAxis = (revenue: Revenue[]) => {
-    // Calculate what labels we need to display on the y-axis
-    // based on highest record and in 1000s
-    const yAxisLabels = [];
-    const highestRecord = Math.max(...revenue.map((month) => month.revenue));
-    const topLabel = Math.ceil(highestRecord / 1000) * 1000;
-
-    for (let i = topLabel; i >= 0; i -= 1000) {
-        yAxisLabels.push(`$${i / 1000}K`);
-    }
-
-    return { yAxisLabels, topLabel };
-};
 
 export const generatePagination = (currentPage: number, totalPages: number) => {
     // If the total number of pages is 7 or less,

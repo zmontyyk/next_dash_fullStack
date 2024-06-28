@@ -1,0 +1,38 @@
+.contentBlock {
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    width: 100px;
+    text-overflow: ellipsis;
+}
+
+@media (min-width: 1024px) {
+    .posts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        /* margin-top:200px; */
+    }
+}
+@media (min-width: 1500px) {
+    .posts {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        /* margin-top:200px; */
+    }
+}
+.postCrads img{
+    height: 300px !important;
+    width: 300px;
+    object-fit: cover;
+    object-position: center;
+}
+.postCrads{
+    padding: 5px;
+}
+.tags {
+    display: flex;
+    justify-content: center;
+    height: 53px;
+    border-top: solid 0.565px rgb(219 219 219);
+}
+.tags a{
+  margin: 10px;
+}
