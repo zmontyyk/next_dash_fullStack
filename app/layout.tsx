@@ -1,8 +1,8 @@
-import '@/app/ui/global.css';
-import { inter } from '@/app/ui/fonts';
-import { SessionProvider } from 'next-auth/react';
-import { auth } from '@/auth';
-
+import "@/app/ui/global.css";
+import { inter } from "@/app/ui/fonts";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
+import { SocketProvider } from "@/components/SocketContext";
 
 export default async function RootLayout({
     children,
@@ -12,11 +12,13 @@ export default async function RootLayout({
     const session = await auth();
     return (
         <SessionProvider session={session}>
-            <html lang="en">
-                <body className={`${inter.className} antialiased`}>
-                    {children}
-                </body>
-            </html>
+            <SocketProvider>
+                <html lang="en">
+                    <body className={`${inter.className} antialiased`}>
+                        {children}
+                    </body>
+                </html>
+            </SocketProvider>
         </SessionProvider>
     );
 }

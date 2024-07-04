@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
+const momnet = require("moment");
 
 // Connect to MongoDB
 mongoose.connect(
@@ -15,8 +16,12 @@ mongoose.connect(
 
 const MessageSchema = new mongoose.Schema({
     room: String,
-    userId: String,
+    from: String,
+    to: String,
     message: String,
+    mediaLink: String,
+    mediaName:String,
+    lastSend: Number,
     timestamp: { type: Date, default: Date.now },
 });
 
@@ -33,21 +38,31 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
     socket.on("join-room", async ({ room }) => {
-        // console.log("room", room);
-        socket.join(room); // Join the unique room
-
+        // Join the unique room
+        socket.join(room);
         const messages = await Message.find({ room }).sort({ timestamp: 1 });
         socket.emit("previous-messages", messages);
     });
 
-    socket.on("message", async ({ from, to, room, msg }) => {
-        console.log(from)
-        console.log(to)
-        console.log(room)
-        // const msg = new Message({ room, userId: socket.id, message });
-        // await msg.save();
-
-        io.to(room).emit("msg-recieve", { from: from, msg: msg }); // Emit the message with sender info
+    socket.on("message", async ({ from, to, room, message,mediaLink,mediaName}) => {
+        const     mes = new Message({
+            room,
+            from,
+            to,
+            message,
+            mediaLink,
+            mediaName,
+            lastSend: momnet().unix(),
+        });
+        await mes.save();
+        io.to(room).emit("msg-recieve", {
+            from: from,
+            to: to,
+            message: message,
+            mediaLink:mediaLink,
+            mediaName:mediaName,
+            lastSend: momnet().unix(),
+        }); // Emit the message with sender info
     });
 
     socket.on("disconnect", () => {
@@ -59,15 +74,3 @@ io.on("connection", (socket) => {
 server.listen(5000, () => {
     console.log(`Socket.io server running at http://localhost:${5000}`);
 });
-
-// io.on('connection', (socket) => {
-//     socket.on('join-room', ({ userId, peerId }) => {
-//       const room = [userId, peerId].sort().join('-'); // Create a unique room name
-//       socket.join(room); // Join the unique room
-//     });
-
-//     socket.on('send-msg', (data) => {
-//       const room = [data.from, data.to].sort().join('-'); // Determine the room based on sender and receiver IDs
-//       io.to(room).emit('msg-recieve', data.msg); // Emit the message to the room
-//     });
-//   });
