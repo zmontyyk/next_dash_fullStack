@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, {
     createContext,
     useContext,
@@ -7,23 +7,33 @@ import React, {
     useState,
 } from "react";
 import { io, Socket } from "socket.io-client";
+import { recieveMessage } from "@/utils/definitions";
 
 interface ISocketContext {
     socket: Socket | null;
+    messages: recieveMessage[];
 }
 
-const SocketContext = createContext<ISocketContext>({ socket: null });
+const SocketContext = createContext<ISocketContext>({
+    socket: null,
+    messages: [],
+});
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
     const [socket, setSocket] = useState<Socket | null>(null);
+    const [messages, setMessages] = useState<recieveMessage[]>([]);
 
     useEffect(() => {
         const newSocket = io("http://localhost:5000");
 
         newSocket.on("connect", () => {
             console.log("Connected with socket ID:", newSocket.id);
+        });
+
+        newSocket.on("msg-recieve", (data: recieveMessage) => {
+            setMessages((prevMessages) => [...prevMessages, data]);
         });
 
         setSocket(newSocket);
@@ -34,7 +44,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     }, []);
 
     return (
-        <SocketContext.Provider value={{ socket }}>
+        <SocketContext.Provider value={{ socket, messages }}>
             {children}
         </SocketContext.Provider>
     );

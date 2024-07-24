@@ -48,7 +48,7 @@ const Page: React.FC = () => {
 
     // Unique room ID
     const room: string = [peerID, session?.user?._id].sort().join("-");
-    
+
     const chatEndRef = useRef<HTMLDivElement>(null);
 
     // Function to scroll to the bottom
@@ -74,7 +74,7 @@ const Page: React.FC = () => {
 
         socket?.emit("join-room", { room });
 
-        socket?.on("msg-recieve", (data: any) => {
+        socket?.on("msg-recieve", (data: Message) => {
             setMessages((prev) => [...prev, data]);
         });
 
@@ -84,8 +84,8 @@ const Page: React.FC = () => {
 
         return () => {
             socket?.off("previous-messages");
-          };
-    }, [room,socket]);
+        };
+    }, [room, socket]);
 
     const uploadFile = async (
         e: React.ChangeEvent<HTMLInputElement>
@@ -301,7 +301,7 @@ const Page: React.FC = () => {
                                 </React.Fragment>
                             );
                         })}
-                        {messages.length && peerData ? null : (
+                        {messages.length > 0 && peerData ? null : (
                             <div className="chatSpinner"></div>
                         )}
                         <div ref={chatEndRef} />

@@ -60,3 +60,11 @@ export interface UserProfile {
   username: string;
   _id: string;
 }
+
+
+export interface recieveMessage {
+  from: string;
+  to: string;
+  message: string;
+  lastSend: number;
+}

@@ -8,8 +8,6 @@ const momnet = require("moment");
 mongoose.connect(
     "mongodb+srv://admin_ai:Admin1234@cluster0.tdzqajf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
     {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
         dbName: "next_full_stack",
     }
 );
